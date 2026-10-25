@@ -1,0 +1,7 @@
+# Ask the team before adding a dependency (see CLAUDE.md).
+pydantic>=2.7
+streamlit>=1.38
+
+# dev
+pytest>=8
+ruff>=0.6

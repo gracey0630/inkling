@@ -1,0 +1,22 @@
+{
+  "mode": "education",
+  "text": "STUB answer. Your temperature has been a bit higher than your usual for the last two days, a pattern that often shows up after ovulation. This is an estimate, not a diagnosis.",
+  "evidence_chips": [
+    {
+      "doc_id": "medlineplus-menstruation",
+      "chunk_id": "medlineplus-menstruation#0",
+      "source_org": "MedlinePlus",
+      "title": "Menstruation (STUB: placeholder snippet, not real retrieved text)",
+      "url": "https://medlineplus.gov/menstruation.html",
+      "snippet": "STUB snippet. The real retriever returns verbatim text from the source document.",
+      "retrieved_at": "2026-10-22T09:00:00Z"
+    }
+  ],
+  "data_chips": [
+    {"label": "Estimated phase", "value": "luteal (day 17)", "chart_ref": "cycle_clock", "source": "synthetic"}
+  ],
+  "uncertainty_note": "Ovulation estimate window is Oct 17 to Oct 21 (confidence 0.55). One night of temperature data is missing.",
+  "safety": "none",
+  "escalation": null,
+  "fallback_used": false
+}

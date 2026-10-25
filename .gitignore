@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Secrets
+.env
+
+# Data: credentialed (mcPHASES/PhysioNet) and real personal data never get committed.
+# Only data/README.md and data/synthetic/ are tracked.
+data/*
+!data/README.md
+!data/synthetic/
+
+# Models and generated artifacts
+models/
+*.pt
+*.pkl
+*.joblib
+*.faiss
+*.index
+
+# Notebooks: commit code, not outputs
+.ipynb_checkpoints/
+
+# Local working files
+_inputs/
+.DS_Store
+.streamlit/secrets.toml

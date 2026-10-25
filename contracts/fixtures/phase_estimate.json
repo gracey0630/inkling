@@ -1,0 +1,13 @@
+{
+  "user_id": "synthetic-maya",
+  "as_of": "2026-10-22",
+  "phase": "luteal",
+  "cycle_day": 17,
+  "ovulation_est_date": "2026-10-19",
+  "ovulation_window": {"start": "2026-10-17", "end": "2026-10-21"},
+  "confidence": 0.55,
+  "method": "wearable",
+  "signals_used": ["skin_temp_dev_c", "rhr_bpm"],
+  "source": "synthetic",
+  "chart_ref": "cycle_clock"
+}
