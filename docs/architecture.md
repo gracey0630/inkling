@@ -38,6 +38,7 @@ Update at each integration gate (Nov 15, Nov 19, Dec 4).
 |---|---|---|
 | Contracts + fixtures | real | v0.1 |
 | signals: records + phase estimate | stub | fixture data, synthetic |
+| signals: Google Health client | real | pulls and caches raw Fitbit data; not yet parsed into `DailyRecord` (see docs/data.md) |
 | rag: retrieve | stub | placeholder evidence |
 | agent: respond | stub | wires stubs; no LLM, no routing, no safety checks yet |
 | app | stub | Streamlit renders `AgentResponse`; no check-in, no Cycle Clock |

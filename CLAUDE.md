@@ -26,6 +26,7 @@ cycle using Fitbit data and trusted sources. It is a course project and **not a 
 - Update the stubbed-vs-real table in `docs/architecture.md` when something becomes real.
 
 ## Data rules
+- `docs/data.md` describes each source's access, structure and quirks. Update it when you learn something.
 - Every data view and output is labeled `real` or `synthetic` (the `source` fields in the contracts).
 - Never commit mcPHASES/PhysioNet data (the terms forbid redistribution), secrets, or real personal
   health data. Only synthetic fixtures are committable. Raw data goes in `data/raw/` (gitignored).

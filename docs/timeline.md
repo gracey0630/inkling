@@ -48,7 +48,7 @@ Other class dates: Quiz 2 on Fri Nov 20; no class on Fri Nov 27 (Thanksgiving).
 - [ ] Agree on contracts v0.1, including the check-in fields (see D5)
 
 **Signals**
-- [ ] Test pull from the Google Health API: which fields come back (temperature? HRV?) and how often
+- [x] Test pull from the Google Health API: which fields come back (temperature? HRV?) and how often (see [data.md](data.md))
 - [ ] Check the mcPHASES schema (wearable signals, hormone and phase labels) and note mismatches with the contracts
 - [ ] Sketch the Cycle Clock dial
 
