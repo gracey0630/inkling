@@ -138,3 +138,18 @@ Newest at the bottom. One entry per decision. To change a decided item, add a ne
 - **Why:** A rule that is only remembered is easy to break. Notebook outputs can carry real rows.
 - **Limits:** The hook catches accidents, not deliberate workarounds. It also blocks harmless commands
   that merely mention those paths (e.g. a grep over docs); use the file tools for those.
+
+### D20. Google Health API client and raw-pull caching
+- **Date:** 2026-10-26 · **Status:** decided
+- **Decision:**
+  - Access goes through the course OAuth helper (BINF 4070 Lab 3): each person puts their own
+    `GOOGLE_HEALTH_REFRESH_TOKEN` / `GOOGLE_HEALTH_HELPER_TOKEN` in `.env`. The course app is read-only.
+  - `signals/google_health.py` is the client. Raw responses are saved to `data/raw/fitbit/`
+    (gitignored, `source: real`) so we can re-analyze without new calls; this is the start of the
+    cached-data fallback (D6).
+  - New dependencies: `requests` (HTTP), `python-dotenv` (load `.env`), `ipykernel` (dev, run notebooks).
+- **Why:** Same flow the course supports. Caching cuts API calls and gives the demo a fallback.
+- **Known from the docs:** period dates have no read scope (only `reproductive_health.writeonly`), so
+  cycle day 1 must come from our own check-in (relevant to D5). Temperature arrives as nightly +
+  baseline Celsius (`daily-sleep-temperature-derivations`); `DailyRecord.skin_temp_dev_c` would be
+  derived. Which types the course scopes cover is checked by the test pull.
