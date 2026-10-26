@@ -17,3 +17,4 @@ jobs:
       - run: ruff check .
       - run: ruff format --check .
       - run: pytest
+      - run: git ls-files -z '*.ipynb' | xargs -0 -r nbstripout --verify

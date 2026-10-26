@@ -29,7 +29,17 @@ cycle using Fitbit data and trusted sources. It is a course project and **not a 
 - Every data view and output is labeled `real` or `synthetic` (the `source` fields in the contracts).
 - Never commit mcPHASES/PhysioNet data (the terms forbid redistribution), secrets, or real personal
   health data. Only synthetic fixtures are committable. Raw data goes in `data/raw/` (gitignored).
-- Never send mcPHASES rows to an LLM API. Eval scripts print aggregate metrics only.
+- Notebooks are committed with outputs stripped (`nbstripout`, checked in CI).
+
+## mcPHASES (PhysioNet restricted-access DUA, see D18)
+- Everyone needs their own PhysioNet access. Never pass files around.
+- Claude never reads raw files or the mcPHASES notebook (denied in `.claude/settings.json`, plus a Bash
+  hook). Claude writes the analysis code, a person runs it, and only schema and aggregates come back
+  (counts, % missing, summary stats). Never rows.
+- No raw rows go to any LLM API, coding assistants included.
+- Public outputs (poster, demo, writeup) show aggregates or synthetic data, never one participant's series.
+- Never try to identify anyone. Flag anything that looks identifying so it can be reported to
+  PHI-report@physionet.org.
 
 ## Definition of done
 Merged to main, runs from a clean clone, has at least one test or eval, and the UI labels its data source.
@@ -38,6 +48,7 @@ Merged to main, runs from a clean clone, has at least one test or eval, and the 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+nbstripout --install                          # once per clone: strip notebook outputs on commit
 pytest                                        # all tests
 ruff check . && ruff format .                 # lint + format
 python -m streamlit run app/streamlit_app.py  # run the app (from repo root)

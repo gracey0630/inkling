@@ -5,4 +5,5 @@
 **Tested how:**
 
 - [ ] Any new output or data view labels its source (real vs synthetic)
-- [ ] No credentialed data, secrets, or real personal health data in this diff
+- [ ] No mcPHASES data, secrets, or real personal health data in this diff
+- [ ] Notebooks have outputs cleared

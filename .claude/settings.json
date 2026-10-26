@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(**/data/raw/mcphases/**)",
+      "Read(**/notebooks/mcphases*)",
+      "Read(**/.env)",
+      "Read(**/token*.json)",
+      "Read(**/credentials*.json)",
+      "Read(**/client_secret*.json)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/block_mcphases.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

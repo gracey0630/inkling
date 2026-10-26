@@ -7,10 +7,15 @@ venv/
 .ruff_cache/
 *.egg-info/
 
-# Secrets
+# Secrets. Google Health tokens live in .env; the patterns below catch stray credential files.
 .env
+token*.json
+credentials*.json
+client_secret*.json
+token.pickle
+.secrets/
 
-# Data: credentialed (mcPHASES/PhysioNet) and real personal data never get committed.
+# Data: restricted-access (mcPHASES/PhysioNet) and real personal data never get committed.
 # Only data/README.md and data/synthetic/ are tracked.
 data/*
 !data/README.md

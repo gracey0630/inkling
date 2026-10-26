@@ -79,7 +79,7 @@ Newest at the bottom. One entry per decision. To change a decided item, add a ne
 - **Alternatives:** uv, conda, poetry.
 
 ### D11. mcPHASES stays local and never reaches an LLM
-- **Date:** 2026-10-24 · **Status:** decided
+- **Date:** 2026-10-24 · **Status:** superseded by D18
 - **Decision:** Only credentialed people handle the raw data. It stays on their machine in `data/raw/`, and only aggregate metrics are shared.
 - **Why:** PhysioNet credentialed-access terms.
 
@@ -109,3 +109,32 @@ Newest at the bottom. One entry per decision. To change a decided item, add a ne
   - Integration #1 moves from Fri Nov 20 to **Thu Nov 19**.
   - The Week 13 integration checkpoint and mock demo is **Fri Dec 4**.
 - **Why:** Nov 20 is the Quiz 2 class day. Dec 4 is confirmed on the course site, and that class includes teams red-teaming each other's agents, so our safety red-team set doubles as prep.
+
+### D18. mcPHASES handling under the restricted-access DUA (supersedes D11)
+- **Date:** 2026-10-26 · **Status:** decided
+- **Decision:**
+  - Each person gets their own PhysioNet access. No passing files around.
+  - Raw data stays on that person's machine in `data/raw/mcphases/`.
+  - No raw rows go to any third-party LLM API, coding assistants included. Claude writes the analysis
+    code, a person runs it, and only schema and aggregates (counts, % missing, summary stats) are shared.
+  - Public outputs (poster, demo, writeup) show aggregates or synthetic data, never one participant's series.
+  - Never try to identify anyone; report anything that looks identifying to PHI-report@physionet.org.
+- **Why:** mcPHASES is under PhysioNet's restricted-access DUA (D11 wrongly said credentialed access).
+  The DUA requires "reasonable and prudent care" for electronic security and no sharing of access.
+  Keeping raw rows away from LLM APIs is our own conservative reading, not an explicit DUA clause.
+- **Scope:** Teammates' own Fitbit data is real personal data but is not under the DUA. Claude may read
+  it locally (`data/raw/fitbit/`); it is never committed and is labeled `source="real"`.
+
+### D19. Enforcing D18 in tooling; notebooks via nbstripout
+- **Date:** 2026-10-26 · **Status:** decided
+- **Decision:**
+  - `.claude/settings.json` denies Claude reading `data/raw/mcphases/`, `notebooks/mcphases*`, `.env`
+    and credential files. A PreToolUse hook (`.claude/hooks/block_mcphases.py`) blocks Bash commands that
+    mention the same paths. Both are checked in, so every teammate's session gets them.
+  - EDA may use notebooks. mcPHASES logic lives in importable functions that return aggregates only; the
+    notebook calls them and Claude never reads it.
+  - New dev dependency `nbstripout`: run `nbstripout --install` once per clone; CI fails on committed
+    notebook outputs.
+- **Why:** A rule that is only remembered is easy to break. Notebook outputs can carry real rows.
+- **Limits:** The hook catches accidents, not deliberate workarounds. It also blocks harmless commands
+  that merely mention those paths (e.g. a grep over docs); use the file tools for those.
