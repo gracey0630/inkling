@@ -73,6 +73,46 @@ def test_list_points_stops_on_repeated_page_token(fake_api):
         gh.list_points("steps", START, END)
 
 
+def test_transient_errors_are_retried(fake_api, monkeypatch):
+    monkeypatch.setattr(gh.time, "sleep", lambda _: None)
+    ok = FakeResponse({"dataPoints": [{}]})
+    fake_api([FakeResponse(status=503), FakeResponse(status=500), ok])
+    assert gh.list_points("steps", START, END) == [{}]
+
+
+def test_persistent_errors_raise_after_retries(fake_api, monkeypatch):
+    monkeypatch.setattr(gh.time, "sleep", lambda _: None)
+    calls = fake_api([FakeResponse(status=503)] * len(gh.RETRY_WAITS_S))
+    with pytest.raises(requests.HTTPError):
+        gh.list_points("steps", START, END)
+    assert len(calls) == len(gh.RETRY_WAITS_S)
+
+
+def test_list_points_pulls_long_ranges_in_chunks(fake_api):
+    calls = fake_api([FakeResponse({"dataPoints": [{"a": i}]}) for i in range(3)])
+    points = gh.list_points("heart-rate", date(2026, 10, 1), date(2026, 10, 16))
+    assert len(points) == 3 and len(calls) == 3  # 15 days = 7 + 7 + 1
+    assert '>= "2026-10-15"' in calls[2]["filter"]
+
+
+def test_coverage_counts_days_and_gaps():
+    def sample(day, hh, mm):
+        return {
+            "oxygenSaturation": {
+                "sampleTime": {
+                    "physicalTime": f"2026-10-{day:02d}T{hh:02d}:{mm:02d}:00Z",
+                    "civilTime": {"date": {"year": 2026, "month": 10, "day": day}},
+                },
+                "percentage": 97,
+            }
+        }
+
+    daily = {"dailyRestingHeartRate": {"date": {"year": 2026, "month": 10, "day": 2}}}
+    cov = gh.coverage([sample(1, 3, 0), sample(1, 3, 1), sample(2, 3, 0)])
+    assert cov["days_with_data"] == 2 and cov["median_gap_min"] > 1
+    assert gh.coverage([daily])["first_day"] == date(2026, 10, 2)
+
+
 def test_probe_reports_each_type_and_saves_real(fake_api, tmp_path):
     fake_api(
         [
