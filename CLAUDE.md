@@ -13,9 +13,12 @@ cycle using Fitbit data and trusted sources. It is a course project and **not a 
 - Education answers cite the trusted corpus. If nothing relevant is retrieved, say "I don't know".
 
 ## Architecture
+- `docs/timeline.md` is the source of truth for schedule and progress. Check it to see what's next. It's flexible:
+  anyone can move or change tasks and internal dates; only course deadlines are fixed.
 - `docs/architecture.md` is a **draft for discussion**. Don't treat it as settled. If a task depends on an open
   decision or would change the architecture, stop and propose it to the team first rather than implementing.
 - Layers: `signals/`, `rag/`, `agent/`, `app/`. They talk only through the models in `contracts/models.py`.
+- Contracts, fixtures and stubs are a **v0.1 draft** and will change as we learn what data is accessible.
 - Work on whichever layer your task touches. Keep changes to a layer's internals inside that layer.
 - **Changing a contract:** update `contracts/models.py`, the matching `contracts/fixtures/*.json`,
   bump `SCHEMA_VERSION`, and add an entry to `docs/decisions.md`, all in the same PR.

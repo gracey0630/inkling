@@ -44,6 +44,7 @@ Copy `.env.example` to `.env` when you need API keys.
 
 ## Docs
 
+- [docs/timeline.md](docs/timeline.md): schedule and progress checklist (source of truth)
 - [docs/architecture.md](docs/architecture.md): diagram, contracts, what is stubbed vs real
 - [docs/decisions.md](docs/decisions.md): decision log
 - [CLAUDE.md](CLAUDE.md): working rules (for people and for Claude Code)

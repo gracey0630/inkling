@@ -17,7 +17,7 @@ Newest at the bottom. One entry per decision. To change a decided item, add a ne
 - **Alternatives:** Shared docs only (drift); JSON Schema files (more tooling).
 
 ### D3. Contract v0.1 refinements over the timeline draft
-- **Date:** 2026-10-24 · **Status:** decided (revisit at Oct 28 lock)
+- **Date:** 2026-10-24 · **Status:** proposed, flexible. Expected to change as data access becomes clear (Google Health API fields, mcPHASES schema, check-in fields from D5).
 - **Decision:**
   - Wearable fields are optional (None = missing), and units appear in field names.
   - Add `user_id`, `schema_version` and `CheckIn.bc_taken`.

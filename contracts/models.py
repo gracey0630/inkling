@@ -1,5 +1,8 @@
 """Interface contracts between layers. Single source of truth.
 
+DRAFT (v0.1): a starting point, not final. Expect fields to change as we learn what data is
+actually accessible (Google Health API fields, mcPHASES schema, check-in design).
+
 Changing a model? Update the matching fixture in contracts/fixtures/ in the same PR,
 bump SCHEMA_VERSION, and add an entry to docs/decisions.md.
 """
