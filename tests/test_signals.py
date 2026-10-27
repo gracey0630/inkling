@@ -1,10 +1,12 @@
 from datetime import date
 
+import pandas as pd
 import pytest
 import requests
 
 from contracts import DailyRecord, PhaseEstimate
 from signals import google_health as gh
+from signals.mcphases import load
 from signals.stub import estimate_phase, get_daily_records
 
 START, END = date(2026, 10, 1), date(2026, 10, 3)
@@ -129,3 +131,12 @@ def test_probe_reports_each_type_and_saves_real(fake_api, tmp_path):
     assert '"source": "real"' in saved
     assert rows["daily-sleep-temperature-derivations"]["status"].startswith("forbidden")
     assert rows["steps"]["status"] == "empty"
+
+
+def test_mcphases_loader_skips_absent_columns(tmp_path):
+    """Synthetic table only: real mcPHASES data never goes in tests."""
+    pd.DataFrame({"id": ["a", "b"], "day_in_study": [1, 2], "value": [60.0, 61.0]}).to_csv(
+        tmp_path / "resting_heart_rate.csv", index=False
+    )
+    df = load("resting_heart_rate", ["id", "value", "error"], root=tmp_path)
+    assert list(df.columns) == ["id", "value"]

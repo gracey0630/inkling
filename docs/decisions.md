@@ -153,3 +153,45 @@ Newest at the bottom. One entry per decision. To change a decided item, add a ne
   cycle day 1 must come from our own check-in (relevant to D5). Temperature arrives as nightly +
   baseline Celsius (`daily-sleep-temperature-derivations`); `DailyRecord.skin_temp_dev_c` would be
   derived. Which types the course scopes cover is checked by the test pull.
+
+### D21. mcPHASES EDA: aggregates-only code, suppression rules, pandas
+- **Date:** 2026-10-27 · **Status:** decided
+- **Decision:**
+  - `signals/explore/mcphases_eda.py` returns aggregates only: counts, % missing, 1st–99th
+    percentiles (never min/max, which are one person's values), and distributions *across*
+    participants (never a per-participant list). A person runs it via the mcPHASES notebook.
+  - Categories seen in fewer than 5 participants are shown as `<5`. Columns with more than 15
+    distinct values are treated as free text: only the count of distinct values is shown.
+  - Demographics (`subject-info.csv`) are reported because our users (young women) differ from the
+    mcPHASES cohort, so fit needs to be shown. One column at a time (never crossed), binned
+    (age band, menarche band), plus ethnicity and menstrual-health literacy. `income` and
+    `sexually_active` are not reported.
+  - New dependency: `pandas`.
+- **Why:** 42 participants is small enough that rare categories, extremes, or crossed columns
+  could single someone out (D18).
+- **Out of scope for now:** `estimated_oxygen_variation.csv` is a raw infrared/red ratio, not SpO2
+  percent, so it doesn't line up with the Google Health API.
+
+### D22. EDA lives in notebooks/; the guardrail covers only the mcPHASES notebook file (amends D19, D21)
+- **Date:** 2026-10-27 · **Status:** decided
+- **Decision:**
+  - EDA sits together in `notebooks/`: each notebook plus a `.py` of the same name that holds its
+    code (`notebooks/mcphases_eda.py`). The mcPHASES loader that later work reuses is
+    `signals/mcphases.py`.
+  - The deny rule and Bash hook cover only the mcPHASES `.ipynb`, not the `.py` next to it. Only a
+    notebook can carry outputs (data); the `.py` holds code, so Claude can read, edit and test it.
+    Running it on the data stays blocked (the hook still stops `python ... mcphases`).
+  - Claude Code refuses to let Claude edit its own `.claude/settings.json`, so a person makes
+    changes to the deny rules.
+- **Why:** One folder for exploration, as the team prefers, while the analysis code stays
+  reviewable and covered by the leak tests.
+
+### D23. The mcPHASES EDA is one self-contained notebook (amends D22)
+- **Date:** 2026-10-27 · **Status:** decided
+- **Decision:** The EDA helpers and sections live in the notebook itself (helpers at the top) and
+  print plain-text tables, which are easier to read and paste back than JSON. The separate
+  `notebooks/mcphases_eda.py` and its leak tests are removed. The reusable loader stays in
+  `signals/mcphases.py` (with a test).
+- **Trade-off:** Claude can't read or edit the notebook (D19), so its code isn't covered by tests.
+  It was dry-run on synthetic tables with planted ids, extremes, free text and skipped columns
+  before hand-off, and none appeared in the output. Later fixes are pasted in by a person.
