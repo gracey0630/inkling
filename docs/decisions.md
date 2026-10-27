@@ -195,3 +195,37 @@ Newest at the bottom. One entry per decision. To change a decided item, add a ne
 - **Trade-off:** Claude can't read or edit the notebook (D19), so its code isn't covered by tests.
   It was dry-run on synthetic tables with planted ids, extremes, free text and skipped columns
   before hand-off, and none appeared in the output. Later fixes are pasted in by a person.
+
+### D24. Which mcPHASES files we use
+- **Date:** 2026-10-27 · **Status:** decided
+- **Decision:** Download and use `hormones_and_selfreport`, `subject-info`, `computed_temperature`,
+  `resting_heart_rate`, `heart_rate_variability_details`, `respiratory_rate_summary`, `sleep`,
+  `steps`, `active_minutes`, `exercise`, and optionally `active_zone_minutes` and
+  `time_in_heart_rate_zones`. Everything else is left out. The list, reasons, and download steps
+  are in `data/README.md`.
+- **Why:** Each file either matches something the Google Health API returns or teaches a pattern
+  the product needs (labels, symptoms by phase, activity as a confounder and for activity-by-phase
+  features). Holding less restricted data is also safer under the DUA.
+- **Left out:** `wrist_temperature` (all-day minute data incl. off-wrist; `computed_temperature`
+  covers it), `estimated_oxygen_variation` (not SpO2 %), `sleep_score` (the API returns no sleep
+  score), `height_and_weight` (one value per round, can't show cycle changes), `distance` (derived
+  from steps), `heart_rate` (huge; daily RHR covers it), `calories`, `altitude`, `glucose`,
+  `stress_score`, `demographic_vo2_max`.
+
+### D25. Contract changes suggested by mcPHASES (for the Oct 28 contract discussion)
+- **Date:** 2026-10-27 · **Status:** proposed
+- **Proposals** (details in the mapping table at the end of `docs/data.md`):
+  - **Phase labels:** mcPHASES uses `Fertility` (a fertile window from Mira's algorithm), not
+    ovulation. Map it to `ovulatory`, or rename that value. Either way, the UI should describe
+    patterns, and must not read as contraception advice ("safe days", "fertile today").
+  - **`hrv_rmssd_ms`** = nightly mean of the 5-minute RMSSD samples, computed the same way for
+    mcPHASES and the API, so a model trained on one carries over.
+  - **`skin_temp_dev_c`** = nightly mean deviation from baseline (`computed_temperature`), which
+    should match the API's nightly minus baseline.
+  - **`CheckIn.bleeding`**: map mcPHASES' 8 flow levels onto our 5 values.
+  - **`CheckIn.pain`**: our 0–10 scale vs mcPHASES' 6 text levels for cramps. Rescale, or adopt
+    the 6 levels so check-ins and training data match.
+  - **Respiratory rate**: available in both sources; candidate field for v0.2.
+- **Also for the team:** the cohort is 18–29 with nobody under 18. If Inkling targets teens, say
+  the data doesn't cover them. `flow_color` values (grey, yellow, orange) may matter for the
+  red-flag list (D5).

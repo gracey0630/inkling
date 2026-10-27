@@ -141,23 +141,91 @@ What this means for Inkling:
 
 ## mcPHASES
 
+Last checked: 2026-10-27, mcPHASES v1.0.0, `notebooks/mcphases_eda.ipynb`.
+
 Access is under PhysioNet's **restricted-access DUA**:
-- Everyone downloads their own copy into `data/raw/mcphases/`.
+- Everyone gets their own access and download: see [data/README.md](../data/README.md#getting-mcphases),
+  which also lists which files we use and why.
 - Claude never reads the raw files.
-- Only **schema and aggregates** go in this section: column names, types, counts, % missing,
-  summary stats. Never rows, and never one participant's series.
+- This section holds only **schema and aggregates**: column names, types, counts, % missing,
+  percentiles. Never rows, and never one participant's series.
 
-### Files and tables
-TBD (from the schema script).
+### The study
 
-### Wearable signals
-TBD: which signals, units, sampling rate, and how they line up with the Fitbit types above.
+- **42 participants** (menstruating adults, no recent hormonal contraception), wearing a
+  **Fitbit Sense** and testing urine hormones daily with a **Mira** monitor.
+- **Two rounds:** 2022 (all 42) and 2024 (~20 of them). About 90 days per participant per round:
+  the median participant has 90 days, and those in both rounds have ~190.
+- **Join keys:** `id` + `day_in_study`. Sleep-based tables use `sleep_start_day_in_study` /
+  `sleep_end_day_in_study`. Every table has `study_interval` (2022/2024) and `is_weekend`.
+  There are no calendar dates.
 
-### Hormone and phase labels
-TBD: which hormones, how phase is defined, and how often labels exist.
+### Phase labels and hormones (`hormones_and_selfreport`)
 
-### Coverage and missingness (aggregate)
-TBD.
+| What | Values | Notes |
+|---|---|---|
+| `phase` | `Menstrual`, `Follicular`, `Fertility`, `Luteal` | On essentially every day for all 42 participants. ~1,080 menstrual days, so roughly 200 cycles |
+| `lh` (mIU/mL), `estrogen` (E3G, ng/mL) | median 4.4 / 100 | 5.7% missing |
+| `pdg` (PdG, mcg/mL) | median 3.4 | **67% missing** |
 
-### Mapping to `DailyRecord` / `PhaseEstimate`
-TBD, including mismatches with the Fitbit fields above.
+- **The labels come from Mira's own algorithm** working from urine hormones, not from a medical
+  measurement of ovulation (no ultrasound). Say so whenever we report accuracy.
+- **`Fertility` is a fertile window, not ovulation day.** Our contract's `Phase` has `ovulatory`;
+  see the mapping below.
+
+### Self-report (`hormones_and_selfreport`)
+
+- About **41% missing** (the diary was optional in the 2024 round).
+- Symptoms (`cramps`, `bloating`, `fatigue`, `headaches`, `moodswing`, `stress`, ...) are **text**,
+  not the 0–5 numbers the README describes: `Not at all`, `Very Low/Little`, `Low`, `Moderate`,
+  `High`, `Very High`. A handful of rows hold stray numbers 1–5.
+- `flow_volume` has 8 levels: `Not at all`, `Spotting / Very Light`, `Light`, `Somewhat Light`,
+  `Moderate`, `Somewhat Heavy`, `Heavy`, `Very Heavy`.
+- `flow_color` includes `Bright Red`, `Dark Brown / Dark Red`, `Pink`, `Orange`, `Yellow`, `Grey`,
+  `Black`, `Other`.
+
+### Wearable signals and how they line up with the Google Health API
+
+| Signal | mcPHASES | Per night | Typical values (p25–p75) | Google Health API |
+|---|---|---|---|---|
+| Skin temp deviation | `computed_temperature`: `baseline_relative_sample_sum / temperature_samples` | 1 (more with naps) | −0.35 to +0.33 °C | `nightlyTemperatureCelsius − baselineTemperatureCelsius` |
+| Skin temp (absolute) | `computed_temperature.nightly_temperature` | 1 | 33.2–34.4 °C | `nightlyTemperatureCelsius` (same scale) |
+| RHR | `resting_heart_rate.value` | 1 | 64–74 bpm | `daily-resting-heart-rate` |
+| HRV | `heart_rate_variability_details.rmssd`, 5-min samples | ~90 (~7.5 h) | 31–69 ms | `heart-rate-variability` (same 5-min RMSSD) |
+| Respiratory rate | `respiratory_rate_summary.full_sleep_breathing_rate` | 1 | 14.4–16.8 /min | `respiratory-rate-sleep-summary` |
+| Sleep | `sleep.minutesasleep`, `mainsleep` | 1+ (naps) | 297–459 min asleep | `sleep.summary.minutesAsleep`, `metadata.mainSleep` |
+
+HRV and respiratory rate cover 40 of the 42 participants; the rest cover all 42.
+
+### Cleaning rules (apply before any modeling)
+
+- **Sentinels mean missing:** RHR `value == 0` (with `error == 100`); respiratory rates of `0` or `-1`.
+- **Duplicate rows in the 2024 round:** `resting_heart_rate` and `sleep` have up to ~10 rows per
+  participant-day in 2024. Deduplicate to one per day (for sleep, use the `mainsleep` session).
+- **The day axis doesn't restart:** the 2022 round is days 1–90, and the 2024 round is roughly days
+  850–997 (the README says each round starts at day 1). Treat each (participant, round) as its own
+  sequence and never bridge the gap.
+- **Don't use `wrist_temperature`:** it's minute-level all day, mostly negative, and includes
+  off-wrist time. Use `computed_temperature`.
+- **Self-report text** needs mapping to ordered levels before use.
+
+### Who is in the data (`subject-info`, one column at a time, groups under 5 suppressed)
+
+- **Age in 2022:** under 20: 17, 20–24: 20, 25–29: 5. So **18–29, nobody under 18**: a good fit
+  for young adults, but results can't be claimed for teens.
+- **Ethnicity:** East Asian 14, Southeast Asian 10, White 9, Middle Eastern 5, others under 5 each.
+  Worth noting because optical sensors can behave differently across skin tones.
+- **Age at first period:** mostly 11–12. **Menstrual-health literacy:** mostly medium or high.
+
+### Mapping to the contracts (proposal, not decided; see D25)
+
+| Contract | From mcPHASES | Open question |
+|---|---|---|
+| `PhaseEstimate.phase` | `Menstrual`→`menstrual`, `Follicular`→`follicular`, `Fertility`→`ovulatory`, `Luteal`→`luteal` | Is "ovulatory" honest for a fertile window, and how do we keep the UI from reading as contraception advice? |
+| `DailyRecord.skin_temp_dev_c` | nightly mean deviation (above) | Confirm it matches the API's nightly minus baseline |
+| `DailyRecord.hrv_rmssd_ms` | nightly mean of 5-min `rmssd` (drop low `coverage`) | Compute the same way from API samples, not the API's daily average |
+| `DailyRecord.rhr_bpm` | `resting_heart_rate.value` (0 = missing) | none |
+| `DailyRecord.sleep_min` | `minutesasleep` of the main sleep | Count naps? |
+| `CheckIn.bleeding` | `flow_volume`: Not at all→none, Spotting→spot, Light + Somewhat Light→light, Moderate→medium, Somewhat Heavy + Heavy + Very Heavy→heavy | none |
+| `CheckIn.pain` (0–10) | `cramps` (6 text levels) | Rescale, or change the contract to the same 6 levels? |
+| (new?) respiratory rate | `full_sleep_breathing_rate` | Add in v0.2? Both sources have it |
