@@ -3,6 +3,7 @@ pydantic>=2.7
 streamlit>=1.38
 requests>=2.32
 python-dotenv>=1.0
+pandas>=2.2
 
 # dev
 ipykernel>=6.29

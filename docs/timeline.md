@@ -45,11 +45,11 @@ Other class dates: Quiz 2 on Fri Nov 20; no class on Fri Nov 27 (Thanksgiving).
 ### Oct 26–30 · Week 8 design studio
 **All**
 - [ ] Pick the hero question: the one question the demo is built around
-- [ ] Agree on contracts v0.1, including the check-in fields (see D5)
+- [ ] Agree on contracts v0.1, including the check-in fields (see D5) and the mcPHASES questions (see D25)
 
 **Signals**
 - [x] Test pull from the Google Health API: which fields come back (temperature? HRV?) and how often (see [data.md](data.md))
-- [ ] Check the mcPHASES schema (wearable signals, hormone and phase labels) and note mismatches with the contracts
+- [x] Check the mcPHASES schema (wearable signals, hormone and phase labels) and note mismatches with the contracts (see [data.md](data.md#mcphases), D24, D25)
 - [ ] Sketch the Cycle Clock dial
 
 **RAG**
@@ -105,6 +105,7 @@ Build a thin end-to-end slice first, then make each layer real. A polished UI ov
 **Signals**
 - [ ] Synthetic Maya: 4 cycles of 27–36 days with matching RHR and temperature patterns (`data/synthetic/`)
 - [x] Stub PhaseEstimate (`signals/stub.py`)
+- [ ] mcPHASES → `DailyRecord`s: apply the cleaning rules in [data.md](data.md#cleaning) (one row per participant-day, 2024 RHR and steps excluded), after contracts v0.1 settle D25
 
 **RAG**
 - [ ] Index v0 (10 docs)

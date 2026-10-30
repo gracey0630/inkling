@@ -153,3 +153,79 @@ Newest at the bottom. One entry per decision. To change a decided item, add a ne
   cycle day 1 must come from our own check-in (relevant to D5). Temperature arrives as nightly +
   baseline Celsius (`daily-sleep-temperature-derivations`); `DailyRecord.skin_temp_dev_c` would be
   derived. Which types the course scopes cover is checked by the test pull.
+
+### D21. mcPHASES EDA: aggregates-only code, suppression rules, pandas
+- **Date:** 2026-10-27 · **Status:** decided
+- **Decision:**
+  - `signals/explore/mcphases_eda.py` returns aggregates only: counts, % missing, 1st–99th
+    percentiles (never min/max, which are one person's values), and distributions *across*
+    participants (never a per-participant list). A person runs it via the mcPHASES notebook.
+  - Categories seen in fewer than 5 participants are shown as `<5`. Columns with more than 15
+    distinct values are treated as free text: only the count of distinct values is shown.
+  - Demographics (`subject-info.csv`) are reported because our users (young women) differ from the
+    mcPHASES cohort, so fit needs to be shown. One column at a time (never crossed), binned
+    (age band, menarche band), plus ethnicity and menstrual-health literacy. `income` and
+    `sexually_active` are not reported.
+  - New dependency: `pandas`.
+- **Why:** 42 participants is small enough that rare categories, extremes, or crossed columns
+  could single someone out (D18).
+- **Out of scope for now:** `estimated_oxygen_variation.csv` is a raw infrared/red ratio, not SpO2
+  percent, so it doesn't line up with the Google Health API.
+
+### D22. EDA lives in notebooks/; the guardrail covers only the mcPHASES notebook file (amends D19, D21)
+- **Date:** 2026-10-27 · **Status:** decided
+- **Decision:**
+  - EDA sits together in `notebooks/`: each notebook plus a `.py` of the same name that holds its
+    code (`notebooks/mcphases_eda.py`). The mcPHASES loader that later work reuses is
+    `signals/mcphases.py`.
+  - The deny rule and Bash hook cover only the mcPHASES `.ipynb`, not the `.py` next to it. Only a
+    notebook can carry outputs (data); the `.py` holds code, so Claude can read, edit and test it.
+    Running it on the data stays blocked (the hook still stops `python ... mcphases`).
+  - Claude Code refuses to let Claude edit its own `.claude/settings.json`, so a person makes
+    changes to the deny rules.
+- **Why:** One folder for exploration, as the team prefers, while the analysis code stays
+  reviewable and covered by the leak tests.
+
+### D23. The mcPHASES EDA is one self-contained notebook (amends D22)
+- **Date:** 2026-10-27 · **Status:** decided
+- **Decision:** The EDA helpers and sections live in the notebook itself (helpers at the top) and
+  print plain-text tables, which are easier to read and paste back than JSON. The separate
+  `notebooks/mcphases_eda.py` and its leak tests are removed. The reusable loader stays in
+  `signals/mcphases.py` (with a test).
+- **Trade-off:** Claude can't read or edit the notebook (D19), so its code isn't covered by tests.
+  It was dry-run on synthetic tables with planted ids, extremes, free text and skipped columns
+  before hand-off, and none appeared in the output. Later fixes are pasted in by a person.
+
+### D24. Which mcPHASES files we use
+- **Date:** 2026-10-27 · **Status:** decided
+- **Decision:** Download and use `hormones_and_selfreport`, `subject-info`, `computed_temperature`,
+  `resting_heart_rate`, `heart_rate_variability_details`, `respiratory_rate_summary`, `sleep`,
+  `steps`, `active_minutes`, `exercise`, and optionally `active_zone_minutes` and
+  `time_in_heart_rate_zones`. Everything else is left out. The list, reasons, and download steps
+  are in `data/README.md`.
+- **Why:** Each file either matches something the Google Health API returns or teaches a pattern
+  the product needs (labels, symptoms by phase, activity as a confounder and for activity-by-phase
+  features). Holding less restricted data is also safer under the DUA.
+- **Left out:** `wrist_temperature` (all-day minute data incl. off-wrist; `computed_temperature`
+  covers it), `estimated_oxygen_variation` (not SpO2 %), `sleep_score` (the API returns no sleep
+  score), `height_and_weight` (one value per round, can't show cycle changes), `distance` (derived
+  from steps), `heart_rate` (huge; daily RHR covers it), `calories`, `altitude`, `glucose`,
+  `stress_score`, `demographic_vo2_max`.
+
+### D25. Contract changes suggested by mcPHASES (for the Oct 28 contract discussion)
+- **Date:** 2026-10-27 · **Status:** proposed
+- **Proposals** (details in the mapping table at the end of `docs/data.md`):
+  - **Phase labels:** mcPHASES uses `Fertility` (a fertile window from Mira's algorithm), not
+    ovulation. Map it to `ovulatory`, or rename that value. Either way, the UI should describe
+    patterns, and must not read as contraception advice ("safe days", "fertile today").
+  - **`hrv_rmssd_ms`** = nightly mean of the 5-minute RMSSD samples, computed the same way for
+    mcPHASES and the API, so a model trained on one carries over.
+  - **`skin_temp_dev_c`** = nightly mean deviation from baseline (`computed_temperature`), which
+    should match the API's nightly minus baseline.
+  - **`CheckIn.bleeding`**: map mcPHASES' 8 flow levels onto our 5 values.
+  - **`CheckIn.pain`**: our 0–10 scale vs mcPHASES' 6 text levels for cramps. Rescale, or adopt
+    the 6 levels so check-ins and training data match.
+  - **Respiratory rate**: available in both sources; candidate field for v0.2.
+- **Also for the team:** the cohort is 18–29 with nobody under 18. If Inkling targets teens, say
+  the data doesn't cover them. `flow_color` values (grey, yellow, orange) may matter for the
+  red-flag list (D5).

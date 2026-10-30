@@ -2,7 +2,7 @@
   "permissions": {
     "deny": [
       "Read(**/data/raw/mcphases/**)",
-      "Read(**/notebooks/mcphases*)",
+      "Read(**/notebooks/mcphases*.ipynb)",
       "Read(**/.env)",
       "Read(**/token*.json)",
       "Read(**/credentials*.json)",
