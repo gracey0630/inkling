@@ -28,7 +28,8 @@ pytest
 python -m streamlit run app/streamlit_app.py
 ```
 
-Copy `.env.example` to `.env` when you need API keys.
+Copy `.env.example` to `.env` when you need API keys. To get the mcPHASES dataset (each person
+signs the PhysioNet data use agreement), see [data/README.md](data/README.md#getting-mcphases).
 
 ## Layers
 

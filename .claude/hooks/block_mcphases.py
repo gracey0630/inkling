@@ -1,7 +1,7 @@
 """PreToolUse hook: stop Claude's shell commands from touching raw mcPHASES data or secrets.
 
 The Read deny rules in .claude/settings.json only cover Claude's file tools; this covers Bash.
-It catches accidents, not a determined workaround. See D18/D19 in docs/decisions.md.
+It catches accidents, not a determined workaround. See D18/D19/D22 in docs/decisions.md.
 """
 
 import json
@@ -11,7 +11,8 @@ import sys
 BLOCKED = [
     (r"data/raw/mcphases", "raw mcPHASES files"),
     (r"MCPHASES_DIR", "the mcPHASES data path"),
-    (r"notebooks/mcphases", "the mcPHASES notebook (its outputs may contain rows)"),
+    # Only the .ipynb: its outputs may contain rows. The .py next to it is code only.
+    (r"notebooks/mcphases[^\s'\"]*\.ipynb", "the mcPHASES notebook (its outputs may contain rows)"),
     (r"(python|jupyter|nbconvert|papermill)\b.*mcphases", "running mcPHASES analysis"),
     (r"(^|[\s/'\"=<])\.env(?![\w.])", ".env (holds credentials)"),
 ]
