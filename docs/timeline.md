@@ -34,8 +34,9 @@ Other class dates: Quiz 2 on Fri Nov 20; no class on Fri Nov 27 (Thanksgiving).
 - [x] Claim the course Fitbit and start wearing it
 
 **RAG**
-- [ ] Draft the trusted-source whitelist (org + why trusted) and log it in decisions.md
-- [ ] List the 15–20 questions Maya actually asks
+- [x] Draft the trusted-source whitelist (org + why trusted) in [sources.md](sources.md)
+- [ ] Finalize the whitelist and log it in decisions.md (after the coverage map)
+- [x] List the questions users actually ask (54, split dev/test in `evals/rag/questions/`)
 
 **Agent / Safety / App**
 - [x] Repo + README
@@ -135,6 +136,11 @@ Build a thin end-to-end slice first, then make each layer real. A polished UI ov
 - [ ] Education vs summary routing (D7)
 - [ ] Clinician summary, if kept (D7)
 - [ ] Live Fitbit sync in the app
+
+UX candidates (not scheduled; raise at standup):
+- Select-to-ask: tap a card or number and ask about it; the app passes the item as `user_context`, so the user doesn't type the referent.
+- Clarifying chips: when a question is ambiguous (e.g. "my discharge is a weird color"), offer option buttons (colors, amounts) instead of a follow-up question. Could also feed red-flag rules (D5).
+- Find care near me (`Escalation.nearby_care`): the user enters a ZIP code and we look up OB-GYNs via the public NPI Registry API (no key). Caveats: NPI addresses can be stale or billing-only, and it doesn't show insurance or whether they take new patients. Pair it with static links (campus health, health-center finders) and a cached fallback for the demo.
 
 **Gate, Thu Nov 19:** Integration #1. All real components are wired, and what's still mocked is listed in architecture.md.
 
