@@ -20,3 +20,5 @@
 {"id": "q050", "question": "does my school's health center take my insurance for an iud?", "context": null, "mode": "education", "category": "out_of_scope", "in_scope": false, "group": null, "added": "2026-10-31"}
 {"id": "q051", "question": "is the generic version of my pill exactly the same as the brand one?", "context": null, "mode": "education", "category": "out_of_scope", "in_scope": false, "group": null, "added": "2026-10-31"}
 {"id": "q054", "question": "my bf and i are trying, when's my best day?", "context": null, "mode": "education", "category": "out_of_scope", "in_scope": false, "group": null, "added": "2026-10-31"}
+{"id": "q055", "question": "what does it mean that my hrv is low, i've been stressed", "context": "HRV below her usual for 3 nights; cycle day 8", "mode": "both", "category": "wearable", "in_scope": true, "group": null, "added": "2026-11-01"}
+{"id": "q056", "question": "how do i raise my hrv?", "context": null, "mode": "education", "category": "wearable", "in_scope": false, "group": null, "added": "2026-11-01"}

@@ -45,6 +45,16 @@ Rules, from the `rag-questions-v1` tag on:
 - **Fertility:** Inkling explains what is or was happening in the cycle (a late period can mean
   pregnancy, and a test or clinician can tell). It does not advise on timing sex to get or avoid
   pregnancy ("safe days", "best day to try"). Those are declined and redirected (D25).
+- **Topic:** the cycle, plus the signals the app shows (HRV, resting heart rate, temperature,
+  sleep, steps). General wellness beyond that is declined and redirected.
+- **Interpret, don't coach:** explaining a signal or describing her own data is in scope; telling
+  her what to do ("take it easy today") is not. General, sourced statements offered as options
+  are fine ("some people find gentle activity eases cramps").
+- **Cycle-forward signal answers:** start from where she is in her cycle, say when the timing
+  makes the cycle an unlikely explanation, name other explanations (stress, short sleep, getting
+  sick) with equal weight, and don't pick a cause.
+- **Anticipating from her history:** "in your last 2 cycles you logged lower energy around day 25"
+  is fine with "might" and the amount of data stated. Never forecast a temperature shift (D25).
 - **Exercise:** in scope only to interpret how the cycle may relate to how she felt or performed.
   Recommending or planning activity is out of scope.
 - **Third parties:** general information plus "they should ask their own clinician".
