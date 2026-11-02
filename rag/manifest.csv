@@ -1,7 +1,10 @@
 doc_id,org,title,url,doc_type,license,topics,v0,notes
 owh-your-menstrual-cycle,Office on Women's Health (HHS),Your menstrual cycle,https://www.womenshealth.gov/menstrual-cycle/your-menstrual-cycle,page,public domain,cycle_basics,yes,
-medlineplus-menstruation,MedlinePlus (NLM),Menstruation,https://medlineplus.gov/menstruation.html,page,public domain,cycle_basics,no,
 nichd-menstruation-and-menstrual-problems,NICHD (NIH),Menstruation and menstrual problems,https://www.nichd.nih.gov/health/topics/menstruation/conditioninfo,page,public domain,cycle_basics,no,
+nichd-menstrual-irregularities,NICHD (NIH),What are menstrual problems or irregularities?,https://www.nichd.nih.gov/health/topics/menstruation/conditioninfo/irregularities,page,public domain,late_irregular;bleeding_red_flags,no,
+nichd-menstrual-irregularities-causes,NICHD (NIH),What causes menstrual irregularities?,https://www.nichd.nih.gov/health/topics/menstruation/conditioninfo/causes,page,public domain,late_irregular,no,
+nichd-menstrual-irregularities-diagnosis,NICHD (NIH),How do health care providers diagnose menstrual irregularities?,https://www.nichd.nih.gov/health/topics/menstruation/conditioninfo/diagnosed,page,public domain,late_irregular;clinician,no,
+nichd-menstruation-faqs,NICHD (NIH),Menstruation: other FAQs,https://www.nichd.nih.gov/health/topics/menstruation/more_information/other-faqs,page,public domain,cycle_basics;clinician,no,
 pmid-37248288,npj Digital Medicine,Menstrual cycle length variation by demographic characteristics (Apple Women's Health Study),https://pubmed.ncbi.nlm.nih.gov/37248288/,research,CC BY,cycle_basics,no,PubMed record; fetch full text from PMC (efetch db=pmc)
 owh-premenstrual-syndrome-pms,Office on Women's Health (HHS),Premenstrual syndrome (PMS),https://www.womenshealth.gov/menstrual-cycle/premenstrual-syndrome,page,public domain,symptoms,yes,
 owh-premenstrual-dysphoric-disorder-pmdd,Office on Women's Health (HHS),Premenstrual dysphoric disorder (PMDD),https://www.womenshealth.gov/menstrual-cycle/premenstrual-syndrome/premenstrual-dysphoric-disorder-pmdd,page,public domain,symptoms,no,
@@ -10,8 +13,11 @@ medlineplus-period-pain,MedlinePlus (NLM),Period pain,https://medlineplus.gov/pe
 cdc-bacterial-vaginosis,CDC,Bacterial vaginosis,https://www.cdc.gov/bacterial-vaginosis/about/index.html,page,public domain,symptoms,yes,
 medlineplus-vaginitis,MedlinePlus (NLM),Vaginitis,https://medlineplus.gov/vaginitis.html,page,public domain,symptoms,no,
 nichd-what-are-the-symptoms-of-vaginitis,NICHD (NIH),What are the symptoms of vaginitis?,https://www.nichd.nih.gov/health/topics/vaginitis/conditioninfo/symptoms,page,public domain,symptoms,no,
+nichd-vaginitis-causes,NICHD (NIH),What causes vaginitis?,https://www.nichd.nih.gov/health/topics/vaginitis/conditioninfo/causes,page,public domain,symptoms,no,
 owh-vaginal-yeast-infections,Office on Women's Health (HHS),Vaginal yeast infections,https://womenshealth.gov/a-z-topics/vaginal-yeast-infections,page,public domain,symptoms,no,
-nichd-amenorrhea,NICHD (NIH),Amenorrhea,https://www.nichd.nih.gov/health/topics/amenorrhea,page,public domain,late_irregular,yes,
+nichd-amenorrhea-causes,NICHD (NIH),What causes amenorrhea?,https://www.nichd.nih.gov/health/topics/amenorrhea/conditioninfo/causes,page,public domain,late_irregular,yes,
+nichd-amenorrhea-diagnosis,NICHD (NIH),How is amenorrhea diagnosed?,https://www.nichd.nih.gov/health/topics/amenorrhea/conditioninfo/diagnosed,page,public domain,late_irregular;clinician,no,
+nichd-amenorrhea-faqs,NICHD (NIH),Amenorrhea: other FAQs,https://www.nichd.nih.gov/health/topics/amenorrhea/more_information/other-faqs,page,public domain,late_irregular;clinician,no,Mentions fertility: review flagged chunks (D25)
 pmid-29409520,BMC Women's Health,Factors associated with menstrual cycle irregularity and menopause,https://pubmed.ncbi.nlm.nih.gov/29409520/,research,CC BY,late_irregular,no,PubMed record; fetch full text from PMC (efetch db=pmc)
 cdc-about-heavy-menstrual-bleeding,CDC,About heavy menstrual bleeding,https://www.cdc.gov/female-blood-disorders/about/heavy-menstrual-bleeding.html,page,public domain,bleeding_red_flags,yes,
 owh-period-problems,Office on Women's Health (HHS),Period problems,https://www.womenshealth.gov/menstrual-cycle/period-problems,page,public domain,bleeding_red_flags,no,
@@ -27,7 +33,9 @@ cdc-spr-progestin-only-pills,CDC (US SPR),US SPR: progestin-only pills,https://w
 nichd-contraception-other-faqs,NICHD (NIH),Contraception: other FAQs,https://www.nichd.nih.gov/health/topics/contraception/more_information/other-faqs,page,public domain,birth_control,no,
 pmid-37823207,J Appl Physiol,Menstrual cycle hormones and oral contraceptives: a systems physiology review,https://pubmed.ncbi.nlm.nih.gov/37823207/,research,CC BY,birth_control,no,PubMed record; fetch full text from PMC (efetch db=pmc)
 owh-polycystic-ovary-syndrome,Office on Women's Health (HHS),Polycystic ovary syndrome,https://www.womenshealth.gov/a-z-topics/polycystic-ovary-syndrome,page,public domain,pcos,yes,
-nichd-polycystic-ovary-syndrome-pcos,NICHD (NIH),Polycystic ovary syndrome (PCOS),https://www.nichd.nih.gov/health/topics/pcos,page,public domain,pcos,no,
+nichd-pcos-symptoms,NICHD (NIH),What are the symptoms of PCOS?,https://www.nichd.nih.gov/health/topics/pcos/conditioninfo/symptoms,page,public domain,pcos,no,
+nichd-pcos-diagnosis,NICHD (NIH),How do health care providers diagnose PCOS?,https://www.nichd.nih.gov/health/topics/pcos/conditioninfo/diagnose,page,public domain,pcos,no,
+nichd-pcos-faqs,NICHD (NIH),PCOS: other FAQs,https://www.nichd.nih.gov/health/topics/pcos/more_information/FAQs,page,public domain,pcos,no,
 google-health-api-vitals,Google Health API docs,Vitals and health metrics data types,https://developers.google.com/health/data-types/vitals,device_docs,CC BY 4.0,wearable,no,"Store only skin temp, HRV, RHR, sleep, breathing rate sections"
 google-health-api-sleep,Google Health API docs,Sleep data types,https://developers.google.com/health/data-types/sleep,device_docs,CC BY 4.0,wearable,no,
 google-health-api-data-points-reference,Google Health API docs,Data points reference (sleep temperature derivations),https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints,device_docs,CC BY 4.0,wearable,yes,"Store only skin temp, HRV, RHR, sleep, breathing rate sections"
