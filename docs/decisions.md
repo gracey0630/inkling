@@ -229,3 +229,25 @@ Newest at the bottom. One entry per decision. To change a decided item, add a ne
 - **Also for the team:** the cohort is 18–29 with nobody under 18. If Inkling targets teens, say
   the data doesn't cover them. `flow_color` values (grey, yellow, orange) may matter for the
   red-flag list (D5).
+
+### D26. Trusted-source whitelist for the RAG corpus
+- **Date:** 2026-11-02 · **Status:** decided
+- **Decision:** Store only US government pages (OWH, NICHD, MedlinePlus health topics, CDC, FDA),
+  open-access papers (CC BY / CC BY-NC) about the cycle or the app's signals, and Google Health API
+  docs (CC BY) for how signals are measured. Details and exclusions in [sources.md](sources.md).
+- **Why:** Answers quote sources verbatim, so we can only store text we're allowed to reuse.
+  Government sites are thin on wearable physiology, so papers fill that gap.
+- **Alternatives:** Clinic sites and ACOG (copyrighted; link-only later), NHS (UK guidance).
+
+### D27. RAG answer scope
+- **Date:** 2026-11-02 · **Status:** decided
+- **Decision:**
+  - Topics: the cycle and the signals the app shows. Other wellness questions are declined.
+  - Interpret, don't coach: explain signals and her data; don't tell her what to do.
+  - Cycle-forward signal answers: start from her cycle, say when the timing doesn't fit, name other
+    explanations (stress, sleep, getting sick) with equal weight, and don't pick a cause.
+  - Patterns from her own history are fine with "might" and the amount of data stated. Never
+    forecast a temperature shift.
+  - No fertility timing (D25): no "safe days" or best days to try.
+- **Why:** Keeps Inkling a cycle app, avoids overclaiming (D4), and stays on the right side of D25.
+  Each rule becomes a key point in the eval (`evals/rag/README.md`).

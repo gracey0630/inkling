@@ -1,22 +1,48 @@
-# Trusted sources (draft)
+# Trusted sources
 
-Candidate whitelist for the RAG corpus (education answers must cite one of these; "I don't know"
-if nothing relevant is retrieved — see CLAUDE.md safety stance). **Not yet logged as a decision —
-for team review before it goes in `docs/decisions.md`.** Ties to the timeline task "Draft the
-trusted-source whitelist (org + why trusted)."
+The RAG corpus whitelist (D26). Education answers cite only these; if nothing relevant is
+retrieved, the answer is "I don't know". The per-document list lives in `rag/manifest.csv`.
 
-**Selection criteria:** government health agency or medical society, no commercial incentive
-(rules out brand/WebMD-style sites), matches a topic the product needs (cycle basics, birth
-control, red-flag conditions).
+## What we store
 
-| Org | Why trusted | Covers | URL |
+We store text only if we're allowed to: US government work (public domain) or an open license.
+
+| Source | Why trusted | License | Covers |
 |---|---|---|---|
-| **ACOG** (American College of Obstetricians and Gynecologists) | US medical society for OB-GYNs; patient FAQs written/reviewed by practicing clinicians | Abnormal uterine bleeding, dysmenorrhea (painful periods), adolescent menstruation guidance | `acog.org/womens-health/faqs/abnormal-uterine-bleeding`, `.../dysmenorrhea-painful-periods` — verified by hand (ACOG blocks automated fetches) |
-| **NICHD** (NIH) | Federal research institute funding menstrual-health research; treats menstruation as a "fifth vital sign" | Menstrual cycle basics, irregularities, when to see a provider | `nichd.nih.gov/health/topics/menstruation` (reviewed 2017 — dated, but the basics it covers don't change) |
-| **MedlinePlus** (National Library of Medicine) | NLM's consumer-health arm; plain-language, physician-reviewed, no ads | Period basics, cycle overview, links out to NICHD/CDC | `medlineplus.gov/menstruation.html` (updated May 2026) |
-| **CDC** | Federal public-health authority; maintains the clinical standard (US MEC/SPR) for contraception | Birth-control method overviews, effectiveness, who should avoid which method | `cdc.gov/contraception/index.html` |
-| **NHS** (UK) | National health service, independent of US clinical politics; good for cross-checking | Period basics, PMS, delaying periods with the pill, fertility | `nhs.uk/conditions/periods/` (review date lapsed Jan 2026 — still live, flagged as slightly stale) |
-| **Office on Women's Health** (HHS) | Federal women's-health office, aimed at a lay audience | Menstrual cycle overview, PMS, period problems | `womenshealth.gov/menstrual-cycle`; birth control at `womenshealth.gov/a-z-topics/birth-control-methods` (not `/birth-control/...` — that one 404s) |
+| **Office on Women's Health** (HHS) | Federal women's-health office, written for a lay audience | Public domain | Cycle, PMS, period problems, PCOS, birth control methods, yeast infections |
+| **NICHD** (NIH) | Federal research institute for reproductive health | Public domain | Irregular periods, amenorrhea, PCOS, vaginitis, contraception FAQs |
+| **MedlinePlus** (NLM), health-topic pages only | NIH's consumer health site, no ads | Public domain | Menstruation, PMS, period pain, vaginitis |
+| **CDC** | Federal public-health agency; sets US contraception guidance (US SPR) | Public domain | Birth control methods, missed pills, heavy bleeding, BV, condoms |
+| **FDA** | Federal regulator of menstrual products | Public domain | Tampon safety and toxic shock syndrome |
+| **Peer-reviewed papers** (PubMed Central) | Peer-reviewed; meta-analyses and large cohorts preferred | CC BY or CC BY-NC | How wearable signals change across the cycle and with birth control; sleep, mood, stress; exercise; cycle length |
+| **Google Health API docs** | Defines how the Fitbit metrics are computed | CC BY 4.0 | What each signal measures (skin temperature, HRV, resting heart rate, sleep) |
 
-**Gaps:** none of these directly address D25's `Fertility`→`ovulatory` framing concern, or PCOS.
-Candidates to add: Endocrine Society (PCOS patient page) or an ACOG PCOS-specific page, once found.
+Papers must be about the cycle or a signal the app shows. Developer docs explain measurement only,
+never health claims.
+
+## What we don't store
+
+- **Fertility-timing content** (D25): OWH's ovulation calculator, fertility pages, and papers built
+  to predict ovulation or the fertile window.
+- **Copyrighted text:** MedlinePlus Medical Encyclopedia and drug pages, AHA, Mayo Clinic,
+  Cleveland Clinic, ACOG, and Google's help center. These may come back later as link-only
+  "read more" sources (see the timeline).
+- **NHS:** openly licensed, but UK guidance. Replaced with US equivalents.
+- **Forums, marketing pages, low-quality journals.**
+
+## Rules
+
+- Each document has a `doc_type`: `page`, `research` or `device_docs`.
+- Research is phrased as "studies found, on average", never applied to one person as a diagnosis.
+- At indexing time, chunks mainly about fertility timing are flagged for review by a person.
+- Only documents in the manifest are indexed; links found on pages are never followed.
+
+## Access notes
+
+- Check each site's robots.txt before fetching, and wait between requests.
+- Papers: fetch full text from PubMed Central with E-utilities (`efetch`, `db=pmc`); the license is
+  in the record. NCBI's old open-access service (`oa.fcgi`) no longer works.
+- MedlinePlus: only health-topic pages (`medlineplus.gov/<topic>.html`) are public domain.
+  `/ency/` and `/druginfo/` pages are copyrighted.
+- CDC's US SPR pages are written for clinicians, so answers need to rephrase them plainly.
+- Google Health API docs: store only the sections for signals the app shows.

@@ -35,7 +35,7 @@ Other class dates: Quiz 2 on Fri Nov 20; no class on Fri Nov 27 (Thanksgiving).
 
 **RAG**
 - [x] Draft the trusted-source whitelist (org + why trusted) in [sources.md](sources.md)
-- [ ] Finalize the whitelist and log it in decisions.md (after the coverage map)
+- [x] Finalize the whitelist and log it in decisions.md (D26, D27)
 - [x] List the questions users actually ask (54, split dev/test in `evals/rag/questions/`)
 
 **Agent / Safety / App**
@@ -136,6 +136,9 @@ Build a thin end-to-end slice first, then make each layer real. A polished UI ov
 - [ ] Education vs summary routing (D7)
 - [ ] Clinician summary, if kept (D7)
 - [ ] Live Fitbit sync in the app
+
+RAG candidates (later, after the basic RAG works):
+- Link-only "read more" sources (Mayo Clinic, Cleveland Clinic, ACOG, Google Health help center, non-open-license papers): shown as links, never stored or cited as evidence. Needs a contract change (e.g. a `read_more` list on `AgentResponse`, since `Evidence` requires a snippet).
 
 UX candidates (not scheduled; raise at standup):
 - Select-to-ask: tap a card or number and ask about it; the app passes the item as `user_context`, so the user doesn't type the referent.

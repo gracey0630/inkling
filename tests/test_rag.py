@@ -1,3 +1,4 @@
+import csv
 import json
 from collections import Counter
 from pathlib import Path
@@ -52,3 +53,16 @@ def test_split_has_no_leaks():
 def test_every_category_on_both_sides():
     dev, test = load_questions("dev"), load_questions("test")
     assert {q["category"] for q in dev} == {q["category"] for q in test} == CATEGORIES
+
+
+MANIFEST = Path(__file__).resolve().parents[1] / "rag" / "manifest.csv"
+
+
+def test_manifest_is_valid():
+    rows = list(csv.DictReader(MANIFEST.open()))
+    assert rows and len({r["doc_id"] for r in rows}) == len(rows), "duplicate doc_id"
+    for r in rows:
+        assert r["url"].startswith("https://"), r["doc_id"]
+        assert r["doc_type"] in {"page", "research", "device_docs"}, r["doc_id"]
+        assert r["license"] in {"public domain", "CC BY", "CC BY-NC", "CC BY 4.0"}, r["doc_id"]
+        assert r["v0"] in {"yes", "no"}, r["doc_id"]
