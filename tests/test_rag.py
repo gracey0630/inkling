@@ -4,15 +4,22 @@ from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
+
 from contracts import Evidence
+from rag import corpus
 from rag.corpus import (
     MAX_WORDS,
     Chunk,
+    Skipped,
     chunk_text,
     extract,
+    extract_blocks,
     fertility_flags,
+    keep_sections,
     load_chunks,
     manifest,
+    paper_text,
 )
 from rag.retriever import best_window, score_chunks, terms, to_evidence
 from rag.stub import retrieve
@@ -150,3 +157,68 @@ def test_manifest_is_valid():
         assert r["doc_type"] in {"page", "research", "device_docs"}, r["doc_id"]
         assert r["license"] in {"public domain", "CC BY", "CC BY-NC", "CC BY 4.0"}, r["doc_id"]
         assert r["v0"] in {"yes", "no"}, r["doc_id"]
+
+
+PAPER_XML = b"""<article><front><article-meta>
+<title-group><article-title>HRV across the cycle</article-title></title-group>
+<permissions><license><ali:license_ref xmlns:ali="http://www.niso.org/schemas/ali/1.0/">
+https://creativecommons.org/licenses/LICENSE/4.0/</ali:license_ref></license></permissions>
+<abstract><p>HRV falls late in the cycle.</p></abstract></article-meta></front>
+<body><sec><title>Introduction</title><p>Background.</p></sec>
+<sec><title>Methods</title><p>We recruited 40 people.</p></sec>
+<sec><title>Results</title><p>HRV was lower.</p>
+<sec><title>Subgroups</title><p>Same.</p></sec></sec>
+</body><back><ref-list><ref>Smith 2020.</ref></ref-list></back></article>"""
+
+
+def test_paper_text_keeps_findings_and_drops_methods_and_references():
+    title, license_name, text = paper_text(PAPER_XML.replace(b"LICENSE", b"by"))
+    assert (title, license_name) == ("HRV across the cycle", "CC BY")
+    assert text.splitlines() == [
+        "Abstract",
+        "HRV falls late in the cycle.",
+        "Introduction",
+        "Background.",
+        "Results",
+        "HRV was lower.",
+        "Subgroups",
+        "Same.",
+    ]
+
+
+def test_paper_without_an_open_license_is_skipped():
+    with pytest.raises(Skipped):
+        paper_text(PAPER_XML.replace(b"LICENSE", b"by-nc-nd"))
+
+
+def test_device_docs_keep_only_listed_sections():
+    html = """<main><h1>Vitals</h1><p>Intro.</p><h2>Temperature</h2><p>Skin temp is relative.</p>
+    <h3>REST representation example</h3><p>{json}</p><h2>Blood glucose</h2><p>mg/dL</p></main>"""
+    _, blocks = extract_blocks(html)
+    assert keep_sections(blocks, {"Temperature"}).splitlines() == [
+        "Temperature",
+        "Skin temp is relative.",
+    ]
+
+
+def test_research_rows_are_fetched_from_europe_pmc(monkeypatch):
+    requested = []
+
+    class Response:
+        content = PAPER_XML.replace(b"LICENSE", b"by-nc")
+
+    monkeypatch.setattr(corpus, "_get", lambda url, robots: requested.append(url) or Response())
+    row = {
+        "doc_id": "pmid-1",
+        "doc_type": "research",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC123/",
+    }
+    title, text = corpus.fetch_text(row, {})
+    assert requested == [corpus.EUROPE_PMC.format(pmcid="PMC123")]
+    assert "HRV was lower." in text and "We recruited" not in text
+
+
+def test_all_documents_are_available_beyond_v0():
+    every = manifest(v0_only=False)
+    v0_ids = {r["doc_id"] for r in manifest()}
+    assert v0_ids < {r["doc_id"] for r in every}

@@ -39,10 +39,13 @@ never health claims.
 
 ## Access notes
 
-- Check each site's robots.txt before fetching, and wait between requests.
-- Papers: fetch full text from PubMed Central with E-utilities (`efetch`, `db=pmc`); the license is
-  in the record. NCBI's old open-access service (`oa.fcgi`) no longer works.
+- Check each site's robots.txt before fetching, and wait between requests. Identify the fetcher
+  with a project name and link: CDC returns 403 to a bare name.
+- Papers: fetch full text from Europe PMC's REST API (`/europepmc/webservices/rest/<PMCID>/fullTextXML`);
+  the license is in the XML. NCBI's E-utilities are disallowed by robots.txt, and PMC article pages
+  return 403 to scripts. Citations still link to the PMC article page.
+- CDC Stacks (`stacks.cdc.gov/view/...`) pages are catalog records, not the document text.
 - MedlinePlus: only health-topic pages (`medlineplus.gov/<topic>.html`) are public domain.
   `/ency/` and `/druginfo/` pages are copyrighted.
 - CDC's US SPR pages are written for clinicians, so answers need to rephrase them plainly.
-- Google Health API docs: store only the sections for signals the app shows.
+- Google Health API docs: store only the sections listed in `rag/corpus.py` (`DEVICE_DOC_SECTIONS`).
