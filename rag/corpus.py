@@ -23,7 +23,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = Path(__file__).with_name("manifest.csv")
 CORPUS_DIR = REPO_ROOT / "data" / "raw" / "corpus"
 
-USER_AGENT = "Inkling-course-project/0.1"
+# Name the project and link it, as polite crawlers do. CDC rejects the bare name with a 403.
+USER_AGENT = "InklingCourseProject/0.1 (+https://github.com/gracey0630/inkling)"
 REQUEST_DELAY_S = 2
 MIN_WORDS = 50
 
